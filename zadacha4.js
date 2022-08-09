@@ -1,4 +1,6 @@
 const readlineSync = require('readline-sync');
+
+//ПЕРСОНАЖИ
 const monster = {
     maxHealth: 10,
     name: "Лютый",
@@ -67,7 +69,9 @@ const person = {
         },
     ]
 }
+//КОНЕЦ ПЕРСОНАЖЕЙ
 
+// СКРИПТЫ ИГРЫ
 const setLevel = () => {
     const level = readlineSync.question('Enter a level (easy, normal, hard) ');
     switch (level){
@@ -83,16 +87,15 @@ const setLevel = () => {
         default:
             console.log('Неверные данные');
     }
-}
+} //Устанавливает уровень сложности easy - 50хп, normal - 25хп, hard - 10хп
 
 const checkSteck = (punch, steck) => {
-   //проверка не в кулдауне ли способность
    if(steck.find(el => el.name === punch.name)) {
-        return steck.find((el,i) => el.name === punch.name && i+1 > punch.cooldown)
+        return steck.find((el) => el.name === punch.name && steck.indexOf(el) >= punch.cooldown)
    } else {
         return true
    }
-}
+}//Проверка доступна ли способность
 
 const monsterAtack = (steck) => {
     let n = null
@@ -105,38 +108,71 @@ const monsterAtack = (steck) => {
             attackPick = true
         }
     }
-}
+}//Монстр атакует
 
 const personAtack = (steck) => {
     let attackPick = false;
     while(attackPick === false) {
         const n = readlineSync.question(`
         Enter a punch number 
-        0 -  Удар боевым кадилом
-        1 -  Вертушка левой пяткой
-        2 -  Каноничный фаербол
-        3 -  Магический блок`);
+        0 -  Blow with a military censer 
+        1 -  Left heel spinner  
+        2 -  Canonical fireball
+        3 -  Magic Block
+        Your choice -- `);
 
         if(checkSteck(person.moves[n], steck.personSteck)) {
             steck.personSteck = [person.moves[n], ...steck.personSteck]
-            console.log(`Евстафий готовится сделать ${person.moves[n].name}`);
+            console.log(`Евстафий готовится сделать ${person.moves[n].name}, способность будет не доступна ${person.moves[n].cooldown} хода/ов`);
             attackPick = true
         } else {
             console.log('Способность недоступна');
         }
     }
-}
+}//Маг атакует
 
-setLevel();
+const dealingDamage = (steck) => {
+    const monsterLastPunch = steck.monsterSteck[0]
+    const personLastPunch = steck.personSteck[0]
+    let magicDmgMonster = personLastPunch.magicArmorPercents - monsterLastPunch.magicDmg;//Магический урон монстра
+    let magicDmgPerson = monsterLastPunch.magicArmorPercents - personLastPunch.magicDmg; //Магический урон мага
+    let physicDmgMonster = personLastPunch.physicArmorPercents - monsterLastPunch.physicalDmg; //Физический урон монстра
+    let physicDmgPerson = monsterLastPunch.physicArmorPercents - personLastPunch.physicalDmg; //Физический урон мага
+    magicDmgMonster > 0? (magicDmgMonster = 0): (magicDmgMonster)
+    magicDmgPerson > 0? (magicDmgPerson = 0): (magicDmgPerson)
+    physicDmgMonster > 0? (physicDmgMonster = 0): (physicDmgMonster)
+    physicDmgPerson > 0? (physicDmgPerson = 0): (physicDmgPerson)
+    console.log('Урон мага - ', magicDmgPerson + physicDmgPerson ,'Урон монстра - ', magicDmgMonster + physicDmgMonster);
+    return {monsterDamage: Number(magicDmgMonster + physicDmgMonster),
+                personDamage: Number(magicDmgPerson + physicDmgPerson)}
+}//Нанесение урона
+//КОНЕЦ СКРИПТОВ
+
+//НАЧАЛО ИГРОВОГО СЦЕНАРИЯ
+while(person.maxHealth === 0) {
+    setLevel();
+} // Игра не начнется пока не выбран уровень сложности
+
+console.log('----------------------------------');
 console.log('Битва начинается Лютый VS Евстафий');
+console.log('----------------------------------');
+
 const steck = {
     personSteck: [],
     monsterSteck: []
-    };
-let i=0
-while(i != 5){
+    };//Стек выбранных способностей
+
+let monsterHp = Number(monster.maxHealth);
+let personHp = Number(person.maxHealth);
+//Установка начальных значений здоровья 
+
+while(monsterHp > 0 && personHp > 0){
     monsterAtack(steck);
     personAtack(steck)
-    i++
+    monsterHp += dealingDamage(steck).personDamage;
+    personHp += dealingDamage(steck).monsterDamage;
+    console.log(`Здоровье Лютого - ${monsterHp} ХП. Здоровье Евстафия - ${personHp} ХП`);
 }
-console.log(steck);
+console.log('----------------------------------');
+monsterHp > personHp? console.log('Победил Лютый'): console.log('Победил Евстафий');
+console.log('----------------------------------');

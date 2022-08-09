@@ -1,15 +1,14 @@
 const readlineSync = require('readline-sync');
-// const userName = readlineSync.question('Как тебя зовут? ');
 
 const getRandomNum = () => {
     let trueNum = '';
     num = Math.floor(Math.random() * (6 - 3)) + 3; // Колличество цифр в загаданном числе от 3х до 6ти
     while (trueNum.length != num) {
         const n = Math.floor(Math.random() * (9 - 1)) + 1;
-        if(!trueNum.includes(n)) {trueNum += n }
+        if(!trueNum.includes(n)) {trueNum += n } //Строка + число = строка 
     }
     return trueNum;
-}
+} //Возвращает загаданное число с длинной от 3 до 6ти цифр (цифры от 1 до 9)
 
 const getNumbersMissed = (HiddenNumber, number) => {
     let i1 = 0;
@@ -56,3 +55,5 @@ for(let i = 0; i < numberOfAttempts; i++){
 }
 
 console.log('Число - ',HiddenNumber);
+
+//ЗАПУСК - node zadacha3.js
