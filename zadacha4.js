@@ -112,7 +112,7 @@ const monsterAtack = (steck) => {
 
 const personAtack = (steck) => {
     let attackPick = false;
-    while(attackPick === false) {
+    while(!attackPick) {
         const n = readlineSync.question(`
         Enter a punch number 
         0 -  Blow with a military censer 
@@ -138,13 +138,13 @@ const dealingDamage = (steck) => {
     let magicDmgPerson = monsterLastPunch.magicArmorPercents - personLastPunch.magicDmg; //Магический урон мага
     let physicDmgMonster = personLastPunch.physicArmorPercents - monsterLastPunch.physicalDmg; //Физический урон монстра
     let physicDmgPerson = monsterLastPunch.physicArmorPercents - personLastPunch.physicalDmg; //Физический урон мага
-    magicDmgMonster > 0? (magicDmgMonster = 0): (magicDmgMonster)
-    magicDmgPerson > 0? (magicDmgPerson = 0): (magicDmgPerson)
-    physicDmgMonster > 0? (physicDmgMonster = 0): (physicDmgMonster)
-    physicDmgPerson > 0? (physicDmgPerson = 0): (physicDmgPerson)
+    magicDmgMonster > 0? (magicDmgMonster = 0): (magicDmgMonster) //Если урон меньше чем защита, то нанесенный урон = 0
+    magicDmgPerson > 0? (magicDmgPerson = 0): (magicDmgPerson) //Если урон меньше чем защита, то нанесенный урон = 0
+    physicDmgMonster > 0? (physicDmgMonster = 0): (physicDmgMonster) //Если урон меньше чем защита, то нанесенный урон = 0
+    physicDmgPerson > 0? (physicDmgPerson = 0): (physicDmgPerson) //Если урон меньше чем защита, то нанесенный урон = 0
     console.log('Урон мага - ', magicDmgPerson + physicDmgPerson ,'Урон монстра - ', magicDmgMonster + physicDmgMonster);
-    return {monsterDamage: Number(magicDmgMonster + physicDmgMonster),
-                personDamage: Number(magicDmgPerson + physicDmgPerson)}
+    return {monsterDamage: Number(magicDmgMonster + physicDmgMonster), 
+                personDamage: Number(magicDmgPerson + physicDmgPerson)} //Возвращаем общий урон физическтй + магический (Сумма - всегда отрицательная или = 0)
 }//Нанесение урона
 //КОНЕЦ СКРИПТОВ
 
