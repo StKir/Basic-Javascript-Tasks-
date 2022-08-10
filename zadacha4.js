@@ -176,3 +176,5 @@ while(monsterHp > 0 && personHp > 0){
 console.log('----------------------------------');
 monsterHp > personHp? console.log('Победил Лютый'): console.log('Победил Евстафий');
 console.log('----------------------------------');
+
+//ЗАПУСК - node zadacha4.js
